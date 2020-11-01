@@ -6,7 +6,10 @@ from torch.utils.data import Dataset
 class Data(Dataset):
     def __init__(self, root, mode):
         self.data = pd.read_csv(os.path.join(root, '{}.csv'.format(mode)))
-        self.data = self.data['text'].apply(self.preprocess)
+        self.data['text'] = self.data['text'].apply(self.preprocess)
+        if mode == 'train':
+            self.data = self.data[self.data['text'] != '']
+            self.data = self.data[['text', 'target']]
 
     def __getitem__(self, index):
         return self.data[index]
@@ -41,4 +44,5 @@ class Data(Dataset):
         return text
 
 if __name__ == '__main__':
-    a = Data('.', 'train')
+    a = Data('.', 'test')
+    print(a.data)
