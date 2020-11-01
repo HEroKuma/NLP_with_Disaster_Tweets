@@ -5,8 +5,6 @@ import os
 
 class electra:
     def __init__(self, path):
-        self.train_path = os.path.join(path, 'train.csv')
-        self.test_path = os.path.join(path, 'test.csv')
         self.parser = argparse.ArgumentParser()
 
     def parse(self):
