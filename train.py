@@ -1,10 +1,12 @@
 import torch
 import pandas as pd
 import argparse
+import os
 
 class electra:
     def __init__(self, path):
-        self.path = path
+        self.train_path = os.path.join(path, 'train.csv')
+        self.test_path = os.path.join(path, 'test.csv')
         self.parser = argparse.ArgumentParser()
 
     def parse(self):
@@ -25,8 +27,8 @@ class electra:
             device = torch.device('cpu')
         self.parse()
         print(self.opt)
-        df_train = pd.read_csv('./train.csv')
-        df_test = pd.read_csv('./test.csv')
+        df_train = pd.read_csv(self.train_path)
+        df_test = pd.read_csv(self.test_path)
 
 
 
