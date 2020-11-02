@@ -5,6 +5,8 @@ import torch
 from torch.utils.data import Dataset
 from transformers import ElectraTokenizer, ElectraForSequenceClassification, AdamW
 from sklearn.model_selection import train_test_split
+from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
+
 
 class Data(Dataset):
     def __init__(self, root, mode):
@@ -72,6 +74,14 @@ class Data(Dataset):
         validation_labels = torch.tensor(validation_labels, dtype=torch.long)
         train_masks = torch.tensor(train_masks, dtype=torch.long)
         validation_masks = torch.tensor(validation_masks, dtype=torch.long)
+
+        train_data = TensorDataset(train_inputs, train_masks, train_labels)
+        train_sampler = RandomSampler(train_data)
+
+        validation_data = TensorDataset(validation_inputs, validation_masks, validation_labels)
+        validation_sampler = SequentialSampler(validation_data)
+
+        return train_data, train_sampler, validation_data, validation_sampler
 
 if __name__ == '__main__':
     a = Data('.', 'test')
