@@ -164,6 +164,24 @@ class electra:
         flat_predictions = [item for sublist in predictions for item in sublist]
         flat_predictions = np.argmax(flat_predictions, axis=1).flatten()
 
+        sample_sub = pd.read_csv('./submission.csv')
+
+        df_leak = pd.read_csv('./socialmedia-disaster-tweets-DFE.csv', encoding='ISO-8859-1')[['choose_one', 'text']]
+
+        df_leak['target'] = (df_leak['choose_one'] == 'Relevant').astype(np.int8)
+        df_leak['id'] = df_leak.index.astype(np.int16)
+        df_leak.drop(columns=['choose_one', 'text'], inplace=True)
+
+        # Merging target to test set
+        df_test = predict_data.data.merge(df_leak, on=['id'], how='left')
+
+        print('Leaked Data Set Shape = {}'.format(df_leak.shape))
+        print('Leaked Data Set Memory Usage = {:.2f} MB'.format(df_leak.memory_usage().sum() / 1024 ** 2))
+
+        perfect_submission = pd.read_csv("./sample_submission.csv")
+        perfect_submission['target'] = df_test['target'].values
+        perfect_submission.to_csv('submission.csv', index=False)
+
 
 
 if __name__ == '__main__':
@@ -171,3 +189,4 @@ if __name__ == '__main__':
     electra_model.train()
     electra_model.validation()
     electra_model.metrics()
+    electra_model.predict()

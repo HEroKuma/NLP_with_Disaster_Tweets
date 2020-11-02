@@ -14,8 +14,8 @@ class Data(Dataset):
         self.mode = mode
         self.tokenizer = tokenizer = ElectraTokenizer.from_pretrained('google/electra-base-discriminator')
         self.data['text'] = self.data['text'].apply(self.preprocess)
-        self.data = self.data[self.data['text'] != '']
         if self.mode == 'train':
+            self.data = self.data[self.data['text'] != '']
             self.data = self.data[['text', 'target']]
             self.labels = self.data.target.values
         self.text = self.data.text.values
