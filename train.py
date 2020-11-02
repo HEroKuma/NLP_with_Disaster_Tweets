@@ -51,7 +51,6 @@ class electra:
         print(self.opt)
 
         train_data = Data('.', 'train')
-        test_data = Data('.', 'test')
 
         # model = ElectraForSequenceClassification.from_pretrained('google/electra-base-discriminator',num_labels=2)
         self.model.to(self.device)
@@ -144,8 +143,12 @@ class electra:
 
         return
 
+    def test(self):
+
 
 
 if __name__ == '__main__':
     electra_model = electra('.')
     electra_model.train()
+    electra_model.validation()
+    electra_model.metrics()

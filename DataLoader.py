@@ -12,13 +12,13 @@ class Data(Dataset):
     def __init__(self, root, mode):
         self.data = pd.read_csv(os.path.join(root, '{}.csv'.format(mode)))
         self.mode = mode
+        self.tokenizer = tokenizer = ElectraTokenizer.from_pretrained('google/electra-base-discriminator')
         self.data['text'] = self.data['text'].apply(self.preprocess)
         self.data = self.data[self.data['text'] != '']
         if self.mode == 'train':
             self.data = self.data[['text', 'target']]
             self.labels = self.data.target.values
         self.text = self.data.text.values
-
 
     def __getitem__(self, index):
         data = [self.text[index]]
@@ -56,8 +56,7 @@ class Data(Dataset):
         return text
 
     def split_data(self):
-        tokenizer = ElectraTokenizer.from_pretrained('google/electra-base-discriminator')
-        indices = tokenizer.batch_encode_plus(self.text, max_length=64, add_special_tokens=True,
+        indices = self.tokenizer.batch_encode_plus(self.text, max_length=64, add_special_tokens=True,
                                               return_attention_mask=True,
                                               pad_to_max_length=True, truncation=True)
         input_ids = indices["input_ids"]
@@ -82,6 +81,22 @@ class Data(Dataset):
         validation_sampler = SequentialSampler(validation_data)
 
         return train_data, train_sampler, validation_data, validation_sampler
+
+    def test_data(self):
+        comments = self.text
+        indices = self.tokenizer.batch_encode_plus(comments, max_length=128, add_special_tokens=True,
+                                                    return_attention_mask=True, pad_to_max_length=True,
+                                                    truncation=True)
+        input_ids = indices["input_ids"]
+        attention_masks = indices["attention_mask"]
+
+        prediction_inputs = torch.tensor(input_ids)
+        prediction_masks = torch.tensor(attention_masks)
+
+        prediction_data = TensorDataset(prediction_inputs, prediction_masks)
+        prediction_sampler = SequentialSampler(prediction_data)
+
+        return prediction_data, prediction_sampler
 
 if __name__ == '__main__':
     a = Data('.', 'test')
