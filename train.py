@@ -2,6 +2,10 @@ import torch
 import pandas as pd
 import argparse
 import os
+import hiddenlayer as hl
+
+from transformers import ElectraTokenizer, ElectraForSequenceClassification, AdamW
+
 
 class electra:
     def __init__(self, path):
@@ -25,9 +29,10 @@ class electra:
             device = torch.device('cpu')
         self.parse()
         print(self.opt)
-        df_train = pd.read_csv(self.train_path)
-        df_test = pd.read_csv(self.test_path)
-
+        tokenizer = ElectraTokenizer.from_pretrained('google/electra-base-discriminator')
+        model = ElectraForSequenceClassification.from_pretrained('google/electra-base-discriminator',num_labels=2)
+        model.device
+        indices = tokenizer.batch_encode_plus(texts, max_length=64, )
 
 
 if __name__ == '__main__':

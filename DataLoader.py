@@ -7,12 +7,16 @@ class Data(Dataset):
     def __init__(self, root, mode):
         self.data = pd.read_csv(os.path.join(root, '{}.csv'.format(mode)))
         self.data['text'] = self.data['text'].apply(self.preprocess)
-        if mode == 'train':
+        self.mode = mode
+        if self.mode == 'train':
             self.data = self.data[self.data['text'] != '']
             self.data = self.data[['text', 'target']]
 
     def __getitem__(self, index):
-        return self.data[index]
+        texts = self.data.text.values
+        if self.mode == 'train':
+            label = self.data.target.values
+        return
 
     def __len__(self):
         return len(self.file)
