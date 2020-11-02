@@ -5,7 +5,8 @@ import os
 import hiddenlayer as hl
 
 from transformers import ElectraTokenizer, ElectraForSequenceClassification, AdamW
-
+from sklearn.model_selection import train_test_split
+from DataLoader import *
 
 class electra:
     def __init__(self, path):
@@ -29,10 +30,13 @@ class electra:
             device = torch.device('cpu')
         self.parse()
         print(self.opt)
-        tokenizer = ElectraTokenizer.from_pretrained('google/electra-base-discriminator')
+
+        train_data = Data('.', 'train')
+        test_data = Data('.', 'test')
+
         model = ElectraForSequenceClassification.from_pretrained('google/electra-base-discriminator',num_labels=2)
         model.device
-        indices = tokenizer.batch_encode_plus(texts, max_length=64, )
+
 
 
 if __name__ == '__main__':
