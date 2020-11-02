@@ -143,7 +143,26 @@ class electra:
 
         return
 
-    def test(self):
+    def predict(self):
+        predict_data = Data('.', 'test')
+        p_data, p_sampler = predict_data.predict_data()
+        prediction_dataloader = DataLoader(p_data, sampler=p_sampler, batch_size=self.opt.batch)
+        print("Predicting labels...")
+        self.model.eval()
+        predictions = []
+
+        for batch in prediction_dataloader:
+            batch = tuple(t.to(self.device) for t in batch)
+            b_input_ids, b_input_mask = batch
+            with torch.no_grad():
+                outputs = self.model(b_input_ids, token_type_ids=None, attention_mask=b_input_mask)
+
+            logits = outputs[0]
+            logits = logits.detach().cpu().numpy()
+            predictions.append(logits)
+
+        flat_predictions = [item for sublist in predictions for item in sublist]
+        flat_predictions = np.argmax(flat_predictions, axis=1).flatten()
 
 
 

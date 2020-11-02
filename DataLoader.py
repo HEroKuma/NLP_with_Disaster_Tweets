@@ -82,7 +82,7 @@ class Data(Dataset):
 
         return train_data, train_sampler, validation_data, validation_sampler
 
-    def test_data(self):
+    def predict_data(self):
         comments = self.text
         indices = self.tokenizer.batch_encode_plus(comments, max_length=128, add_special_tokens=True,
                                                     return_attention_mask=True, pad_to_max_length=True,
